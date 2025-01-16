@@ -1,0 +1,98 @@
+import api from '@lib/axios';
+import { handleAxiosError } from '@/utils';
+import { CheckPasswordForm, ConfirmToken, ForgotPasswordForm, NewPasswordForm, RequestConfirmationCodeForm, UserLoginForm, UserRegistrationForm } from '@/types';
+import { userSchema } from '@/schemas';
+
+export async function createAccount(formData: UserRegistrationForm) {
+    try {
+        const url = '/v1/auth/signup'
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function confirmAccount(formData: ConfirmToken) {
+    try {
+        const url = '/v1/auth/confirm-account'
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function requestConfirmationCode(formData: RequestConfirmationCodeForm) {
+    try {
+        const url = '/v1/auth/request-code'
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function login(formData: UserLoginForm) {
+    try {
+        const url = '/v1/auth/login'
+        const { data } = await api.post<string>(url, formData)
+        localStorage.setItem('AUTH_TOKEN', data)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function forgotPassword(formData: ForgotPasswordForm) {
+    try {
+        const url = '/v1/auth/forgot-password'
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function validateToken(formData: ConfirmToken) {
+    try {
+        const url = '/v1/auth/validate-token'
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function updatePasswordWithToken({ formData, token }: { formData: NewPasswordForm, token: ConfirmToken['token'] }) {
+    try {
+        const url = `/v1/auth/update-password/${token}`
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function getUser() {
+    try {
+        const { data } = await api('/v1/auth/user')
+        const response = userSchema.safeParse(data)
+
+        if (response.success) {
+            return response.data
+        }
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
+
+export async function checkPassword(formData: CheckPasswordForm) {
+    try {
+        const url = '/v1/auth/check-password'
+        const { data } = await api.post<string>(url, formData)
+        return data
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
